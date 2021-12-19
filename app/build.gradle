@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -68,6 +69,13 @@ dependencies {
     // Google Maps
     implementation("com.google.android.libraries.maps:maps:3.1.0-beta")
     implementation('com.google.maps.android:maps-v3-ktx:3.3.0')
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$rootProject.hiltCoreVersion"
+    kapt "androidx.hilt:hilt-compiler:$rootProject.hiltVersion"
+    kapt "com.google.dagger:hilt-compiler:$rootProject.hiltCoreVersion"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$rootProject.hiltCoreVersion"
+
 }
 secrets {
     propertiesFileName = "secrets.properties"
