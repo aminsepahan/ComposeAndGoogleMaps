@@ -7,11 +7,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.amin.composeandmaps.ui.theme.ComposeAndMapsTheme
 import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
@@ -19,15 +24,25 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.maps.android.ktx.awaitMap
+import de.allianzservices.hrdmobile.navigation.AppNavHost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var navController: NavHostController
+
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ActivityContent()
+            navController = rememberNavController()
+            CompositionLocalProvider {
+                ComposeAndMapsTheme {
+                    AppNavHost(navController)
+                }
+            }
         }
     }
 }
