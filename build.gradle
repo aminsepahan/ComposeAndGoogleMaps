@@ -7,6 +7,9 @@ buildscript {
         hiltCoreVersion = '2.38.1'
         navigationVersion = '2.3.3'
         hiltComposeNavigationVersion = "1.0.0-alpha03"
+        retrofitVersion = "2.9.0"
+        interceptorVersion = "4.9.1"
+        timberVersion = '5.0.1'
     }
     dependencies {
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.0"

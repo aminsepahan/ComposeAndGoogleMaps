@@ -72,6 +72,11 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$composeVersion"
 
+    // Retrofit
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$interceptorVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+
     // Google Maps
     implementation("com.google.android.libraries.maps:maps:3.1.0-beta")
     implementation('com.google.maps.android:maps-v3-ktx:3.3.0')
@@ -83,9 +88,12 @@ dependencies {
     kaptAndroidTest "com.google.dagger:hilt-compiler:$hiltCoreVersion"
     implementation "androidx.hilt:hilt-navigation-compose:$hiltComposeNavigationVersion"
 
-    // compose and navigation
+    // Compose and navigation
     implementation "androidx.navigation:navigation-compose:$composeNavigationVersion"
     implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
+
+    // logging
+    implementation "com.jakewharton.timber:timber:$timberVersion"
 
 }
 secrets {
