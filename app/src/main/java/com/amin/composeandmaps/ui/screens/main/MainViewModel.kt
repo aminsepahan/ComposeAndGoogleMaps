@@ -1,4 +1,4 @@
-package de.allianzservices.hrdmobile.ui.splash
+package com.amin.composeandmaps.ui.screens.welcome
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _startAppNavigation by lazy { MutableLiveData<String>() }

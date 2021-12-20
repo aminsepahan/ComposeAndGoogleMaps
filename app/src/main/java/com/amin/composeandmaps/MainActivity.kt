@@ -21,10 +21,8 @@ import com.amin.composeandmaps.ui.theme.ComposeAndMapsTheme
 import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.MarkerOptions
-import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.maps.android.ktx.awaitMap
-import de.allianzservices.hrdmobile.navigation.AppNavHost
+import com.amin.composeandmaps.navigation.AppNavHost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

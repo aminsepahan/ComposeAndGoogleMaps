@@ -1,4 +1,4 @@
-package de.allianzservices.hrdmobile.navigation
+package com.amin.composeandmaps.navigation
 
 import android.app.Activity
 import androidx.compose.material.ExperimentalMaterialApi
@@ -10,7 +10,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.amin.composeandmaps.navigation.NavScreen.*
 import com.amin.composeandmaps.ui.screens.SplashScreen
+import com.amin.composeandmaps.ui.screens.main.MainScreen
+import com.amin.composeandmaps.ui.screens.welcome.WelcomeScreen
 import com.google.accompanist.insets.ProvideWindowInsets
 
 
@@ -25,16 +28,25 @@ fun AppNavHost(
         NavActions(navController, activity)
     }
     ProvideWindowInsets {
-        NavHost(navController = navController, startDestination = NavScreen.SplashScreen.route) {
-            composable(NavScreen.SplashScreen.route) {
+        NavHost(navController = navController, startDestination = SplashScreen.route) {
+            composable(SplashScreen.route) {
                 SplashScreen(
                     viewModel = hiltViewModel(),
                     navigateToWelcomeScreen = actions.navigateToWelcomeScreenAndClearBackStack
                 )
             }
 
-            composable(NavScreen.WelcomeScreen.route) {
+            composable(WelcomeScreen.route) {
+                WelcomeScreen(
+                    viewModel = hiltViewModel(),
+                    navigateToMainScreen = actions.navigateToMainScreenAndClearBackStack
+                )
+            }
 
+            composable(MainScreen.route) {
+                MainScreen(
+                    viewModel = hiltViewModel(),
+                )
             }
         }
     }

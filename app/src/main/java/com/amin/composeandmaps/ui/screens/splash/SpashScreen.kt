@@ -4,16 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.amin.composeandmaps.R
+import androidx.compose.ui.tooling.preview.Preview
 import com.amin.composeandmaps.ui.theme.screenBack
-import de.allianzservices.hrdmobile.navigation.NavScreen
+import com.amin.composeandmaps.utils.SelfDestructEvent
+import com.amin.composeandmaps.navigation.NavScreen
 import de.allianzservices.hrdmobile.ui.splash.SplashViewModel
 
 @Composable
@@ -21,11 +19,16 @@ fun SplashScreen(
     viewModel: SplashViewModel,
     navigateToWelcomeScreen: () -> Unit,
 ) {
-    SplashScreenUI()
+    SelfDestructEvent(viewModel.startAppNavigation) {
+        when (it) {
+            NavScreen.WelcomeScreen.route -> run(navigateToWelcomeScreen)
+        }
+    }
+    SplashScreenContent()
 }
 
 @Composable
-fun SplashScreenUI() {
+fun SplashScreenContent() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -35,4 +38,10 @@ fun SplashScreenUI() {
     ) {
         Text("Your logo here :)")
     }
+}
+
+@Preview
+@Composable
+fun ContentPreview() {
+    SplashScreenContent()
 }
