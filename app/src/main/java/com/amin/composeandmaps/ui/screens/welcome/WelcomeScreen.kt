@@ -17,7 +17,7 @@ import com.amin.composeandmaps.ui.theme.screenBack
 
 @Composable
 fun WelcomeScreen(
-    viewModel: MainViewModel,
+    viewModel: WelcomeViewModel,
     navigateToMainScreen: () -> Unit,
 ) {
     WelcomeScreenContent(onOkButtonClick = navigateToMainScreen)
