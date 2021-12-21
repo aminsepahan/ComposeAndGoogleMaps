@@ -1,5 +1,6 @@
 package com.amin.composeandmaps.di
 
+import com.amin.composeandmaps.data.car.CarRepository
 import com.amin.composeandmaps.data.car.CarService
 import com.amin.composeandmaps.data.car.impl.CarRepositoryImpl
 import dagger.Module
@@ -16,7 +17,7 @@ object RepositoryModule {
     @Singleton
     fun provideCarRepository(
         service: CarService,
-    ): CarRepositoryImpl {
+    ): CarRepository {
         return CarRepositoryImpl(service)
     }
 
