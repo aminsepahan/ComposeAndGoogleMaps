@@ -38,12 +38,10 @@ fun MainScreenContent() {
             .fillMaxSize()
             .background(screenBack),
     ) {
-        val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-        )
+        val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
         val coroutineScope = rememberCoroutineScope()
-        BottomSheetScaffold(
-            scaffoldState = bottomSheetScaffoldState,
+        ModalBottomSheetLayout(
+            sheetState = bottomSheetScaffoldState,
             sheetContent = {
                 Box(
                     Modifier
@@ -52,26 +50,26 @@ fun MainScreenContent() {
                 ) {
                     LazyColumn {
                         item {
-                            for (i in 1..10){
-                                Text(text = "item 1")
+                            for (i in 1..15){
+                                Text(text = "item $i")
                             }
                         }
                     }
                 }
-            }, sheetPeekHeight = 0.dp
+            },
         ) {
+            Map()
             Button(onClick = {
                 coroutineScope.launch {
-                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
+                    if (bottomSheetScaffoldState.isVisible) {
+                        bottomSheetScaffoldState.hide()
                     } else {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                        bottomSheetScaffoldState.show()
                     }
                 }
             }) {
                 Text(text = "Expand/Collapse Bottom Sheet")
             }
-            Map()
         }
     }
 }

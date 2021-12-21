@@ -16,8 +16,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    const val AUTH_FORMAT = "Basic %s"
-
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {

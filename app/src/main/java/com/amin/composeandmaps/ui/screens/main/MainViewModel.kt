@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amin.composeandmaps.data.car.CarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.amin.composeandmaps.navigation.NavScreen
 import kotlinx.coroutines.delay
@@ -12,6 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val carRepository: CarRepository
 ) : ViewModel() {
 
     private val _startAppNavigation by lazy { MutableLiveData<String>() }
