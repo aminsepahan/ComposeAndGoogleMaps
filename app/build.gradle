@@ -95,6 +95,9 @@ dependencies {
     // logging
     implementation "com.jakewharton.timber:timber:$timberVersion"
 
+    // coil
+    implementation "io.coil-kt:coil-compose:$coilVersion"
+
 }
 secrets {
     propertiesFileName = "secrets.properties"

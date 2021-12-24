@@ -1,8 +1,11 @@
 package com.amin.composeandmaps.ui.screens.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -12,10 +15,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.amin.composeandmaps.data.models.Car
+import com.amin.composeandmaps.ui.theme.AppCard
 import com.amin.composeandmaps.ui.theme.AppIcon
 import com.amin.composeandmaps.ui.theme.screenBack
 import com.amin.composeandmaps.ui.theme.white
@@ -125,6 +133,34 @@ fun Map(state: UIState<List<Car>>) {
     }
 }
 
+@Composable
+fun CarCardItem(car: Car) {
+    AppCard {
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalCoilApi::class)
+@Composable
+fun ImageItem(imageUrl: String) {
+    Image(
+        painter = rememberImagePainter(imageUrl),
+        contentDescription = null,
+        modifier = Modifier
+            .padding(5.dp)
+            .size(100.dp)
+            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true),
+    )
+}
+
+@Preview
+@Composable
+fun ImageItemPreview(){
+    ImageItem(imageUrl = "https://cdn.sixt.io/codingtask/images/mini.png",  )
+}
+
 @Preview
 @Composable
 fun ContentIdlePreview() {
@@ -136,3 +172,4 @@ fun ContentIdlePreview() {
 fun ContentSuccessPreview() {
     MainScreenContent(UIState.Success(listOf(Car.mock())))
 }
+
