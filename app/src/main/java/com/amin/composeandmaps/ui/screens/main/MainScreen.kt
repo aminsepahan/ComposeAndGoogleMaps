@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,7 +25,6 @@ import com.amin.composeandmaps.ui.theme.AppIcon
 import com.amin.composeandmaps.ui.theme.screenBack
 import com.amin.composeandmaps.ui.theme.white
 import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
-import com.amin.composeandmaps.ui.utils.setZoom
 import com.amin.composeandmaps.utils.UIState
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
@@ -36,8 +34,6 @@ import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,19 +56,24 @@ fun MainScreenContent(state: UIState<List<Car>>) {
     ) {
         val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
         val coroutineScope = rememberCoroutineScope()
+        var selectedCar: Car? by remember {
+            mutableStateOf(null)
+        }
         ModalBottomSheetLayout(
             sheetState = bottomSheetScaffoldState,
             sheetContent = {
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .height(280.dp)
+                        .height(400.dp)
                 ) {
                     if (state.isSuccess()) {
                         LazyColumn {
                             item {
                                 state.data?.forEach { car ->
-                                    CarCardItem(car)
+                                    CarCardItem(car) {
+                                        selectedCar = car
+                                    }
                                 }
                             }
                         }
@@ -83,7 +84,7 @@ fun MainScreenContent(state: UIState<List<Car>>) {
             },
         ) {
             val mapView = rememberMapViewWithLifecycle()
-            MapViewContainer(mapView, state)
+            MapViewContainer(mapView, state, selectedCar)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -104,7 +105,13 @@ fun MainScreenContent(state: UIState<List<Car>>) {
                         tint = white,
                         modifier = Modifier.padding(5.dp)
                     )
-                    Text(text = "Show cars list")
+                    Text(
+                        text = if (bottomSheetScaffoldState.isVisible) {
+                            "Hide the list"
+                        } else {
+                            "show the list"
+                        }
+                    )
                 }
             }
         }
@@ -114,7 +121,8 @@ fun MainScreenContent(state: UIState<List<Car>>) {
 @Composable
 private fun MapViewContainer(
     map: MapView,
-    state: UIState<List<Car>>
+    state: UIState<List<Car>>,
+    selectedCar: Car?
 ) {
     val cameraPosition = remember {
         defaultLatLong
@@ -131,12 +139,22 @@ private fun MapViewContainer(
         coroutineScope.launch {
             val googleMap = mapView.awaitMap()
             googleMap.uiSettings.isZoomControlsEnabled = true
-            val destination = if (state.isSuccess() && !state.data.isNullOrEmpty()) {
-                val car = state.data!![0]
-                car.latLong
-            } else {
-                defaultLatLong
-            }
+            var zoom = 11f
+            val destination =
+                when {
+                    selectedCar != null -> {
+                        zoom = 13f
+                        selectedCar.latLong
+                    }
+                    state.isSuccess() && !state.data.isNullOrEmpty() -> {
+                        val car = state.data!![0]
+                        car.latLong
+                    }
+                    else -> {
+                        defaultLatLong
+                    }
+                }
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, zoom))
             if (state.isSuccess()) {
                 state.data?.forEach { car ->
                     val markerOptionsDestination = MarkerOptions()
@@ -144,15 +162,17 @@ private fun MapViewContainer(
                         .position(car.latLong)
                     googleMap.addMarker(markerOptionsDestination)
                 }
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, 10f))
             }
         }
     }
 }
 
 @Composable
-fun CarCardItem(car: Car) {
-    AppCard {
+fun CarCardItem(car: Car, onCarCardClicked: () -> Unit) {
+    AppCard(
+        modifier = Modifier.padding(5.dp),
+        onClick = onCarCardClicked
+    ) {
         Row(
             modifier = Modifier
                 .padding(5.dp)
