@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -21,16 +19,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.ui.theme.AppCard
-import com.amin.composeandmaps.ui.theme.AppIcon
 import com.amin.composeandmaps.ui.theme.screenBack
 import com.amin.composeandmaps.ui.theme.white
 import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
 import com.amin.composeandmaps.utils.UIState
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
+import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
-import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.glide.GlideImage
@@ -73,12 +70,18 @@ fun MainScreenContent(state: UIState<List<Car>>) {
                                 state.data?.forEach { car ->
                                     CarCardItem(car) {
                                         selectedCar = car
+                                        coroutineScope.launch {
+                                            bottomSheetScaffoldState.hide()
+                                        }
                                     }
                                 }
                             }
                         }
                     } else {
-                        Text("Still loading, try again in a few seconds ...")
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "Still loading, try again in a few seconds ..."
+                        )
                     }
                 }
             },
@@ -91,26 +94,38 @@ fun MainScreenContent(state: UIState<List<Car>>) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Button(onClick = {
-                    coroutineScope.launch {
-                        if (bottomSheetScaffoldState.isVisible) {
-                            bottomSheetScaffoldState.hide()
-                        } else {
-                            bottomSheetScaffoldState.show()
+                Button(
+                    modifier = Modifier
+                        .padding(horizontal = 50.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        coroutineScope.launch {
+                            if (bottomSheetScaffoldState.isVisible) {
+                                bottomSheetScaffoldState.hide()
+                            } else {
+                                bottomSheetScaffoldState.show()
+                            }
                         }
-                    }
-                }) {
-                    AppIcon(
-                        imageVector = Icons.Filled.List,
-                        tint = white,
-                        modifier = Modifier.padding(5.dp)
-                    )
+                    }) {
                     Text(
-                        text = if (bottomSheetScaffoldState.isVisible) {
-                            "Hide the list"
-                        } else {
-                            "show the list"
-                        }
+                        text = when {
+                            state.isLoading() -> {
+                                "Loading the list"
+                            }
+                            state.isSuccess() -> {
+                                if (bottomSheetScaffoldState.isVisible) {
+                                    "Hide the list"
+                                } else {
+                                    "show the list"
+                                }
+                            }
+                            state.isError() -> {
+                                "Something went wrong"
+                            }
+                            else -> {
+                                ""
+                            }
+                        }, color = white
                     )
                 }
             }
@@ -130,7 +145,6 @@ private fun MapViewContainer(
 
     LaunchedEffect(map) {
         val googleMap = map.awaitMap()
-        googleMap.addMarker { position(cameraPosition) }
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPosition))
     }
 
@@ -139,14 +153,15 @@ private fun MapViewContainer(
         coroutineScope.launch {
             val googleMap = mapView.awaitMap()
             googleMap.uiSettings.isZoomControlsEnabled = true
-            var zoom = 11f
+            var zoom = 9f
             val destination =
                 when {
                     selectedCar != null -> {
-                        zoom = 13f
+                        zoom = 14f
                         selectedCar.latLong
                     }
                     state.isSuccess() && !state.data.isNullOrEmpty() -> {
+                        zoom = 10f
                         val car = state.data!![0]
                         car.latLong
                     }
@@ -160,6 +175,7 @@ private fun MapViewContainer(
                     val markerOptionsDestination = MarkerOptions()
                         .title("${car.name} ${car.modelName}")
                         .position(car.latLong)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car))
                     googleMap.addMarker(markerOptionsDestination)
                 }
             }
@@ -175,9 +191,9 @@ fun CarCardItem(car: Car, onCarCardClicked: () -> Unit) {
     ) {
         Row(
             modifier = Modifier
-                .padding(5.dp)
+                .padding(8.dp)
                 .fillMaxWidth()
-                .padding(6.dp),
+                .padding(3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ImageItem(imageUrl = car.carImageUrl)
@@ -196,7 +212,7 @@ fun ImageItem(imageUrl: String) {
         error = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
         modifier = Modifier
             .padding(5.dp)
-            .size(70.dp)
+            .size(60.dp)
             .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true)
     )
 }
