@@ -38,4 +38,10 @@ class MainViewModel @Inject constructor(
         val cars = carRepository.getAllCars()
         _carsState.postValue(UIState.Success(cars))
     }
+
+    fun loadCars() {
+        viewModelScope.launch {
+            loadItems()
+        }
+    }
 }

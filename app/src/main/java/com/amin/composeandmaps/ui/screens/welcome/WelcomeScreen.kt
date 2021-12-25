@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.ui.theme.Typography
 import com.amin.composeandmaps.ui.theme.screenBack
+import com.amin.composeandmaps.ui.theme.white
 
 @Composable
 fun WelcomeScreen(
@@ -38,7 +39,7 @@ fun WelcomeScreenContent(onOkButtonClick: () -> Unit) {
             modifier = Modifier.padding(16.dp)
         )
         Button(onClick = onOkButtonClick, modifier = Modifier.padding(16.dp)) {
-            Text("Ok :p", style = Typography.button)
+            Text("Ok :p", style = Typography.button, color = white)
         }
     }
 }

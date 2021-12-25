@@ -29,7 +29,6 @@ import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
-import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 
@@ -38,12 +37,14 @@ fun MainScreen(
     viewModel: MainViewModel,
 ) {
     val carsState by viewModel.carsState.observeAsState(UIState.Idle())
-    MainScreenContent(carsState)
+    MainScreenContent(carsState) {
+        viewModel.loadCars()
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainScreenContent(state: UIState<List<Car>>) {
+fun MainScreenContent(state: UIState<List<Car>>, tryAgain: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -94,39 +95,37 @@ fun MainScreenContent(state: UIState<List<Car>>) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Button(
-                    modifier = Modifier
-                        .padding(horizontal = 50.dp)
-                        .fillMaxWidth(),
-                    onClick = {
-                        coroutineScope.launch {
-                            if (bottomSheetScaffoldState.isVisible) {
-                                bottomSheetScaffoldState.hide()
-                            } else {
-                                bottomSheetScaffoldState.show()
-                            }
-                        }
-                    }) {
-                    Text(
-                        text = when {
-                            state.isLoading() -> {
-                                "Loading the list"
-                            }
-                            state.isSuccess() -> {
+                if (!bottomSheetScaffoldState.isVisible) {
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = 50.dp)
+                            .fillMaxWidth(),
+                        onClick = {
+                            coroutineScope.launch {
                                 if (bottomSheetScaffoldState.isVisible) {
-                                    "Hide the list"
+                                    bottomSheetScaffoldState.hide()
                                 } else {
-                                    "show the list"
+                                    bottomSheetScaffoldState.show()
                                 }
                             }
-                            state.isError() -> {
-                                "Something went wrong"
-                            }
-                            else -> {
-                                ""
-                            }
-                        }, color = white
-                    )
+                        }) {
+                        Text(
+                            text = when {
+                                state.isLoading() -> {
+                                    "Loading the list"
+                                }
+                                state.isSuccess() -> {
+                                    "show the list"
+                                }
+                                state.isError() -> {
+                                    "Something went wrong, click here to try agian"
+                                }
+                                else -> {
+                                    ""
+                                }
+                            }, color = white
+                        )
+                    }
                 }
             }
         }
@@ -157,11 +156,11 @@ private fun MapViewContainer(
             val destination =
                 when {
                     selectedCar != null -> {
-                        zoom = 14f
+                        zoom = 15f
                         selectedCar.latLong
                     }
                     state.isSuccess() && !state.data.isNullOrEmpty() -> {
-                        zoom = 10f
+                        zoom = 12f
                         val car = state.data!![0]
                         car.latLong
                     }
@@ -191,13 +190,12 @@ fun CarCardItem(car: Car, onCarCardClicked: () -> Unit) {
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-                .padding(3.dp),
+                .padding(4.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ImageItem(imageUrl = car.carImageUrl)
-            Text(text = car.name)
+            Text(text = "${car.name}, ${car.modelName}")
         }
     }
 }
@@ -207,11 +205,9 @@ fun ImageItem(imageUrl: String) {
     GlideImage(
         imageModel = imageUrl,
         contentScale = ContentScale.Inside,
-        circularReveal = CircularReveal(duration = 250),
         placeHolder = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
         error = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
         modifier = Modifier
-            .padding(5.dp)
             .size(60.dp)
             .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true)
     )
@@ -226,13 +222,13 @@ fun ImageItemPreview() {
 @Preview
 @Composable
 fun ContentIdlePreview() {
-    MainScreenContent(UIState.Idle())
+    MainScreenContent(UIState.Idle(), {})
 }
 
 @Preview
 @Composable
 fun ContentSuccessPreview() {
-    MainScreenContent(UIState.Success(listOf(Car.mock())))
+    MainScreenContent(UIState.Success(listOf(Car.mock())), {})
 }
 
 private const val InitialZoom = 5f
