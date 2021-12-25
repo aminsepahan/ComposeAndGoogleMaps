@@ -102,8 +102,8 @@ fun MainScreenContent(state: UIState<List<Car>>, tryAgain: () -> Unit) {
                             .fillMaxWidth(),
                         onClick = {
                             coroutineScope.launch {
-                                if (bottomSheetScaffoldState.isVisible) {
-                                    bottomSheetScaffoldState.hide()
+                                if (state.isError()) {
+                                    tryAgain()
                                 } else {
                                     bottomSheetScaffoldState.show()
                                 }
@@ -153,21 +153,18 @@ private fun MapViewContainer(
             val googleMap = mapView.awaitMap()
             googleMap.uiSettings.isZoomControlsEnabled = true
             var zoom = 9f
-            val destination =
-                when {
-                    selectedCar != null -> {
-                        zoom = 15f
-                        selectedCar.latLong
-                    }
-                    state.isSuccess() && !state.data.isNullOrEmpty() -> {
-                        zoom = 12f
-                        val car = state.data!![0]
-                        car.latLong
-                    }
-                    else -> {
-                        defaultLatLong
-                    }
+            var destination = defaultLatLong
+            when {
+                selectedCar != null -> {
+                    zoom = 15f
+                    destination = selectedCar.latLong
                 }
+                state.isSuccess() && !state.data.isNullOrEmpty() -> {
+                    zoom = 12f
+                    val car = state.data!![0]
+                    destination = car.latLong
+                }
+            }
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, zoom))
             if (state.isSuccess()) {
                 state.data?.forEach { car ->
