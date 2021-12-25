@@ -1,3 +1,5 @@
+import com.amin.composeandmaps.buildsrc.Libs
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -15,10 +17,13 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["dagger.hilt.disableModulesHaveInstallInCheck"] = "true"
+            }
         }
     }
 
@@ -37,9 +42,16 @@ android {
     }
     buildFeatures {
         compose true
+
+        // Disable unused AGP features
+        buildConfig false
+        aidl false
+        renderScript false
+        resValues false
+        shaders false
     }
     composeOptions {
-        kotlinCompilerExtensionVersion composeVersion
+        kotlinCompilerExtensionVersion '1.1.0-rc02'
     }
     packagingOptions {
         resources {
@@ -53,50 +65,62 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
-    implementation 'androidx.activity:activity-compose:1.4.0'
-    implementation 'androidx.fragment:fragment:1.4.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation Libs.Kotlin.stdlib
+    implementation Libs.Kotlin.Coroutines.android
+    implementation Libs.GoogleMaps.maps
+    implementation Libs.GoogleMaps.mapsKtx
+    constraints {
+        // Volley is a transitive dependency of maps
+        implementation(Libs.Volley.volley) {
+            because("Only volley 1.2.0 or newer are available on maven.google.com")
+        }
+    }
 
-    // Compose
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
-    implementation "androidx.compose.ui:ui:$composeVersion"
-    implementation "androidx.compose.material:material:$composeVersion"
-    implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
-    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
-    implementation "androidx.compose.runtime:runtime:$composeVersion"
-    debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$composeVersion"
+    implementation Libs.Accompanist.insets
+    implementation Libs.AndroidX.Activity.activityCompose
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.fragment
+    implementation Libs.AndroidX.Compose.runtime
+    implementation Libs.AndroidX.Compose.runtimeLivedata
+    implementation Libs.AndroidX.Compose.foundation
+    implementation Libs.AndroidX.Compose.navigation
+    implementation Libs.AndroidX.Compose.material
+    implementation Libs.AndroidX.Compose.layout
+    implementation Libs.AndroidX.Compose.animation
+    implementation Libs.AndroidX.Compose.tooling
+    implementation Libs.AndroidX.Lifecycle.viewModelCompose
 
-    // Retrofit
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$interceptorVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation Libs.AndroidX.Lifecycle.viewModelKtx
+    implementation Libs.Hilt.android
+    kapt Libs.Hilt.compiler
 
-    // Google Maps
-    implementation("com.google.android.libraries.maps:maps:3.1.0-beta")
-    implementation('com.google.maps.android:maps-v3-ktx:3.3.0')
+    debugImplementation Libs.AndroidX.Compose.uiTestManifest
+
+    androidTestImplementation Libs.JUnit.junit
+    androidTestImplementation Libs.AndroidX.Test.core
+    androidTestImplementation Libs.AndroidX.Test.runner
+    androidTestImplementation Libs.AndroidX.Test.espressoCore
+    androidTestImplementation Libs.AndroidX.Test.rules
+    androidTestImplementation Libs.AndroidX.Test.Ext.junit
+    androidTestImplementation Libs.Kotlin.Coroutines.test
+    androidTestImplementation Libs.AndroidX.Compose.uiTest
+    androidTestImplementation Libs.Hilt.android
+    androidTestImplementation Libs.Hilt.testing
+    kaptAndroidTest Libs.Hilt.compiler
+
+    implementation Libs.Retrofit.retrofit
+    implementation Libs.Retrofit.gson
+    implementation Libs.Retrofit.loggingInterceptor
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:$hiltCoreVersion"
-    kapt "androidx.hilt:hilt-compiler:$hiltVersion"
-    kapt "com.google.dagger:hilt-compiler:$hiltCoreVersion"
-    kaptAndroidTest "com.google.dagger:hilt-compiler:$hiltCoreVersion"
-    implementation "androidx.hilt:hilt-navigation-compose:$hiltComposeNavigationVersion"
+    implementation Libs.Hilt.android
+    kapt Libs.Hilt.compiler
+    implementation Libs.Hilt.navigationCompose
 
-    // Compose and navigation
-    implementation "androidx.navigation:navigation-compose:$composeNavigationVersion"
-    implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
+    implementation Libs.Timber.timber
 
-    // logging
-    implementation "com.jakewharton.timber:timber:$timberVersion"
-
-    // coil
-    implementation "io.coil-kt:coil-compose:$coilVersion"
+    implementation Libs.ImageLoading.landscapist
 
 }
 secrets {

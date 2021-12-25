@@ -1,5 +1,7 @@
 package com.amin.composeandmaps.data.models
 
+import com.google.android.libraries.maps.model.LatLng
+
 data class Car(
     val carImageUrl: String,
     val color: String,
@@ -18,6 +20,8 @@ data class Car(
     val series: String,
     val transmission: String
 ) {
+
+    val latLong = LatLng(latitude, longitude)
     companion object {
         fun mock() = Car(
             id = "WMWSW31030T222518",

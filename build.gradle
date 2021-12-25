@@ -1,29 +1,64 @@
+
+import com.amin.composeandmaps.buildsrc.Libs
+import com.amin.composeandmaps.buildsrc.Urls
+import com.amin.composeandmaps.buildsrc.Versions
+
 buildscript {
-    ext {
-        composeVersion = '1.1.0-rc01'
-        composeNavigationVersion = '2.4.0-rc01'
-        accompanistVersion = '0.18.0'
-        hiltVersion = "1.0.0"
-        hiltCoreVersion = '2.38.1'
-        navigationVersion = '2.3.3'
-        hiltComposeNavigationVersion = "1.0.0-alpha03"
-        retrofitVersion = "2.9.0"
-        interceptorVersion = "4.9.1"
-        timberVersion = '5.0.1'
-        coilVersion = '1.3.2'
+    repositories {
+        google()
     }
     dependencies {
-        classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.0"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
-        classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltCoreVersion"
+        classpath Libs.androidGradlePlugin
+        classpath Libs.secrets
+        classpath Libs.Kotlin.gradlePlugin
+        classpath Libs.Hilt.gradlePlugin
     }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    id 'com.android.application' version '7.2.0-alpha06' apply false
-    id 'com.android.library' version '7.2.0-alpha06' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.0' apply false
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+plugins {
+    id 'com.diffplug.spotless' version '6.0.0'
+}
+
+subprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        if (!Libs.AndroidX.Compose.snapshot.isEmpty()) {
+            maven { url Urls.composeSnapshotRepo }
+        }
+
+        if (Libs.Accompanist.version.endsWith('SNAPSHOT')) {
+            maven { url Urls.mavenCentralSnapshotRepo }
+        }
+    }
+
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+        kotlin {
+            target '**/*.kt'
+            targetExclude("$buildDir/**/*.kt")
+            targetExclude('bin/**/*.kt')
+            ktlint(Versions.ktLint)
+            licenseHeaderFile rootProject.file('spotless/copyright.kt')
+        }
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            // Treat all Kotlin warnings as errors (disabled by default)
+            allWarningsAsErrors = project.hasProperty("warningsAsErrors") ? project.warningsAsErrors : false
+
+            jvmTarget = "1.8"
+
+            // Use experimental APIs
+            freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
+        }
+    }
+    // androidx.test and hilt are forcing JUnit, 4.12. This forces them to use 4.13
+    configurations.configureEach {
+        resolutionStrategy {
+            force Libs.JUnit.junit
+        }
+    }
 }

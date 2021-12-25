@@ -1,6 +1,7 @@
 package com.amin.composeandmaps.ui.utils
 
 import android.os.Bundle
+import androidx.annotation.FloatRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -8,9 +9,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.Transformations.map
 import com.amin.composeandmaps.R
+import com.amin.composeandmaps.ui.screens.main.MaxZoom
+import com.amin.composeandmaps.ui.screens.main.MinZoom
+import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.MapView
 
+/**
+ * Remembers a MapView and gives it the lifecycle of the current LifecycleOwner
+ */
 @Composable
 fun rememberMapViewWithLifecycle(): MapView {
     val context = LocalContext.current
@@ -20,10 +28,10 @@ fun rememberMapViewWithLifecycle(): MapView {
         }
     }
 
-    // Makes MapView follow the lifecycle of this composable
-    val lifecycleObserver = rememberMapLifecycleObserver(mapView)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    DisposableEffect(lifecycle) {
+    DisposableEffect(lifecycle, mapView) {
+        // Make MapView follow the current lifecycle
+        val lifecycleObserver = getMapLifecycleObserver(mapView)
         lifecycle.addObserver(lifecycleObserver)
         onDispose {
             lifecycle.removeObserver(lifecycleObserver)
@@ -33,18 +41,23 @@ fun rememberMapViewWithLifecycle(): MapView {
     return mapView
 }
 
-@Composable
-fun rememberMapLifecycleObserver(mapView: MapView): LifecycleEventObserver =
-    remember(mapView) {
-        LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_CREATE -> mapView.onCreate(Bundle())
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
-                Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
-                else -> throw IllegalStateException()
-            }
+private fun getMapLifecycleObserver(mapView: MapView): LifecycleEventObserver =
+    LifecycleEventObserver { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_CREATE -> mapView.onCreate(Bundle())
+            Lifecycle.Event.ON_START -> mapView.onStart()
+            Lifecycle.Event.ON_RESUME -> mapView.onResume()
+            Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+            Lifecycle.Event.ON_STOP -> mapView.onStop()
+            Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
+            else -> throw IllegalStateException()
         }
     }
+
+fun GoogleMap.setZoom(
+    @FloatRange(from = MinZoom.toDouble(), to = MaxZoom.toDouble()) zoom: Float
+) {
+    resetMinMaxZoomPreference()
+    setMinZoomPreference(zoom)
+    setMaxZoomPreference(zoom)
+}
