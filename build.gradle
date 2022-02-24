@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath Libs.androidGradlePlugin
+        classpath 'com.android.tools.build:gradle:7.1.2'
         classpath Libs.secrets
         classpath Libs.Kotlin.gradlePlugin
         classpath Libs.Hilt.gradlePlugin
