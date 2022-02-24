@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.amin.composeandmaps.ui.theme.screenBack
 import com.amin.composeandmaps.utils.SelfDestructEvent
 import com.amin.composeandmaps.navigation.NavScreen
-import de.allianzservices.hrdmobile.ui.splash.SplashViewModel
+import com.amin.composeandmaps.ui.screens.splash.SplashViewModel
 
 @Composable
 fun SplashScreen(

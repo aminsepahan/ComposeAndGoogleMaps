@@ -74,18 +74,27 @@ object Libs {
             const val viewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:$version"
             const val viewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
+    }
+    object UnitTest {
+        const val core = "androidx.test:core:1.4.0"
+        const val junit = "junit:junit:4.13"
+        const val hamcrest = "org.hamcrest:hamcrest-all:1.3"
+        const val coreTesting = "androidx.arch.core:core-testing:2.1.0"
+        const val robolectric = "org.robolectric:robolectric:4.3.1"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1"
+        const val truth = "com.google.truth:truth:1.0.1"
+        const val mockito = "org.mockito:mockito-core:2.21.0"
+    }
 
-        object Test {
-            private const val version = "1.4.0"
-            const val core = "androidx.test:core:$version"
-            const val runner = "androidx.test:runner:$version"
-            const val rules = "androidx.test:rules:$version"
-            object Ext {
-                private const val version = "1.1.2"
-                const val junit = "androidx.test.ext:junit-ktx:$version"
-            }
-            const val espressoCore = "androidx.test.espresso:espresso-core:3.2.0"
-        }
+    object InstrumentTest {
+        const val junit = "junit:junit:4.13"
+        const val mockitoDexMaker = "com.linkedin.dexmaker:dexmaker-mockito:2.12.1"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1"
+        const val coreTesting = "androidx.arch.core:core-testing:2.1.0"
+        const val truth = "com.google.truth:truth:1.0.1"
+        const val junitExt = "androidx.test.ext:junit:1.1.1"
+        const val espresso = "androidx.test.espresso:espresso-core:3.2.0"
+        const val mockito = "org.mockito:mockito-core:2.21.0"
     }
 
     object Hilt {
@@ -93,7 +102,9 @@ object Libs {
 
         const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
         const val android = "com.google.dagger:hilt-android:$version"
+        const val viewModel = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
         const val compiler = "com.google.dagger:hilt-compiler:$version"
+        const val androidxCompiler = "androidx.hilt:hilt-compiler:1.0.0-alpha02"
         const val testing = "com.google.dagger:hilt-android-testing:$version"
         const val navigationCompose = "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
 
@@ -101,7 +112,6 @@ object Libs {
 
     object JUnit {
         private const val version = "4.13"
-        const val junit = "junit:junit:$version"
     }
 
 

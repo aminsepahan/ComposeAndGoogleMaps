@@ -1,11 +1,12 @@
-package de.allianzservices.hrdmobile.ui.splash
+package com.amin.composeandmaps.ui.screens.splash
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import com.amin.composeandmaps.navigation.NavScreen
+import com.amin.composeandmaps.utils.Constants.SplashScreenDelay
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class SplashViewModel @Inject constructor(
 
     private fun startApp() {
         viewModelScope.launch {
-            delay(500)
+            delay(SplashScreenDelay)
             _startAppNavigation.postValue(NavScreen.WelcomeScreen.route)
         }
     }
