@@ -9,7 +9,7 @@ object Versions {
 object Libs {
     const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.3"
     const val ktLint = "com.pinterest:ktlint:${Versions.ktLint}"
-    const val secrets = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.0"
+    const val secrets = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
 
     object GoogleMaps {
         const val maps = "com.google.android.libraries.maps:maps:3.1.0-beta"
