@@ -38,7 +38,7 @@ fun MainScreen(
 ) {
     val carsState by viewModel.carsState.observeAsState(UIState.Idle())
     MainScreenContent(carsState) {
-        viewModel.loadCars()
+        viewModel.loadItems()
     }
 }
 

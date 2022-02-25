@@ -94,7 +94,6 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.viewModelKtx
 
 
-    debugImplementation Libs.AndroidX.Compose.uiTestManifest
 
     androidTestImplementation Libs.Kotlin.Coroutines.test
     androidTestImplementation Libs.AndroidX.Compose.uiTest
@@ -125,12 +124,7 @@ dependencies {
     testImplementation Libs.UnitTest.truth
     testImplementation Libs.UnitTest.mockito
 
-    //other
-    implementation Libs.Timber.timber
-    implementation Libs.ImageLoading.landscapist
-
-
-    //other
+    //instrument test
     androidTestImplementation Libs.InstrumentTest.junit
     androidTestImplementation Libs.InstrumentTest.mockitoDexMaker
     androidTestImplementation Libs.InstrumentTest.coroutines
@@ -139,6 +133,15 @@ dependencies {
     androidTestImplementation Libs.InstrumentTest.junitExt
     androidTestImplementation Libs.InstrumentTest.espresso
     androidTestImplementation Libs.InstrumentTest.mockito
+    androidTestImplementation Libs.AndroidX.Compose.uiTest
+    debugImplementation Libs.AndroidX.Compose.uiTestManifest
+
+    //other
+    implementation Libs.Timber.timber
+    implementation Libs.ImageLoading.landscapist
+
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
 
 }
 secrets {
