@@ -3,7 +3,6 @@ package com.amin.composeandmaps.buildsrc
 
 object Versions {
     const val ktLint = "0.43.0"
-    const val composeVersion = "1.1.0-rc02"
 }
 
 object Libs {
@@ -23,6 +22,7 @@ object Libs {
     object Accompanist {
         const val version = "0.22.0-rc"
         const val insets = "com.google.accompanist:accompanist-insets:$version"
+        const val permissions = "com.google.accompanist:accompanist-permissions:$version"
     }
 
     object Retrofit {
@@ -95,6 +95,13 @@ object Libs {
         const val junitExt = "androidx.test.ext:junit:1.1.1"
         const val espresso = "androidx.test.espresso:espresso-core:3.2.0"
         const val mockito = "org.mockito:mockito-core:2.21.0"
+        const val rules = "androidx.test:rules:1.4.0"
+    }
+
+    object Orchestrator {
+        const val version = "1.1.0"
+        const val runner = "androidx.test:runner:$version"
+        const val orchestrator = "androidx.test:orchestrator:$version"
     }
 
     object Hilt {

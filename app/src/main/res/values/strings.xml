@@ -3,4 +3,5 @@
     <string name="splash_text">This is an empty splash screen used for branding,\nit will show for one second</string>
     <string name="welcome_text">This is the welcome screen which will be shown only once unless you don\'t have allowed the location permission</string>
     <string name="welcome_btn_text">Let\'s go</string>
+    <string name="btn_give_permissions">Give location permission</string>
 </resources>

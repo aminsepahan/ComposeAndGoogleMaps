@@ -30,6 +30,8 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,92 +47,69 @@ fun MainScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreenContent(state: UIState<List<Car>>, tryAgain: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+    )
+    var selectedCar: Car? by remember {
+        mutableStateOf(null)
+    }
+    val scope = rememberCoroutineScope()
+    BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(screenBack),
-    ) {
-        val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-        val coroutineScope = rememberCoroutineScope()
-        var selectedCar: Car? by remember {
-            mutableStateOf(null)
-        }
-        ModalBottomSheetLayout(
-            sheetState = bottomSheetScaffoldState,
-            sheetContent = {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(400.dp)
-                ) {
-                    if (state.isSuccess()) {
-                        LazyColumn {
-                            item {
-                                state.data?.forEach { car ->
-                                    CarCardItem(car) {
-                                        selectedCar = car
-                                        coroutineScope.launch {
-                                            bottomSheetScaffoldState.hide()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = "Still loading, try again in a few seconds ..."
-                        )
-                    }
+        scaffoldState = bottomSheetScaffoldState,
+        sheetContent = {
+            BottomSheetContent(state) {
+                selectedCar = it
+                scope.launch {
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
-            },
-        ) {
-            val mapView = rememberMapViewWithLifecycle()
-            MapViewContainer(mapView, state, selectedCar)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                if (!bottomSheetScaffoldState.isVisible) {
-                    Button(
-                        modifier = Modifier
-                            .padding(horizontal = 50.dp)
-                            .fillMaxWidth(),
-                        onClick = {
-                            coroutineScope.launch {
-                                if (state.isError()) {
-                                    tryAgain()
-                                } else {
-                                    bottomSheetScaffoldState.show()
-                                }
-                            }
-                        }) {
-                        Text(
-                            text = when {
-                                state.isLoading() -> {
-                                    "Loading the list"
-                                }
-                                state.isSuccess() -> {
-                                    "show the list"
-                                }
-                                state.isError() -> {
-                                    "Something went wrong, click here to try agian"
-                                }
-                                else -> {
-                                    ""
-                                }
-                            }, color = white
-                        )
+            }
+        }
+    ) {
+
+        MainScreen(state, selectedCar, bottomSheetScaffoldState, scope, tryAgain)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun MainScreen(
+    state: UIState<List<Car>>,
+    selectedCar: Car?,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    coroutineScope: CoroutineScope,
+    tryAgain: () -> Unit
+) {
+    val mapView = rememberMapViewWithLifecycle()
+    MapViewContainer(mapView, state, selectedCar)
+}
+
+@Composable
+fun BottomSheetContent(state: UIState<List<Car>>, onItemClicked: (item: Car) -> Job) = Box(
+    Modifier
+        .fillMaxWidth()
+        .height(400.dp)
+) {
+    if (state.isSuccess()) {
+        LazyColumn {
+            item {
+                state.data?.forEach { item ->
+                    CarCardItem(item) {
+                        onItemClicked(item)
                     }
                 }
             }
         }
+    } else {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = "Still loading, try again in a few seconds ..."
+        )
     }
 }
+
 
 @Composable
 private fun MapViewContainer(
