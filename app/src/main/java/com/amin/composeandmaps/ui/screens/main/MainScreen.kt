@@ -20,7 +20,6 @@ import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.ui.theme.AppCard
 import com.amin.composeandmaps.ui.theme.screenBack
-import com.amin.composeandmaps.ui.theme.white
 import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
 import com.amin.composeandmaps.utils.UIState
 import com.google.android.libraries.maps.CameraUpdateFactory
@@ -30,7 +29,6 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -60,16 +58,16 @@ fun MainScreenContent(state: UIState<List<Car>>, tryAgain: () -> Unit) {
             .background(screenBack),
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
-            BottomSheetContent(state) {
+            BottomSheetContent(state, onItemClicked = {
                 selectedCar = it
                 scope.launch {
                     bottomSheetScaffoldState.bottomSheetState.collapse()
                 }
-            }
-        }
+            }, bottomSheetScaffoldState.bottomSheetState)
+        },
+        sheetPeekHeight = sheetPeekHeight.dp
     ) {
-
-        MainScreen(state, selectedCar, bottomSheetScaffoldState, scope, tryAgain)
+        MainScreen(state, selectedCar)
     }
 }
 
@@ -77,36 +75,78 @@ fun MainScreenContent(state: UIState<List<Car>>, tryAgain: () -> Unit) {
 @Composable
 private fun MainScreen(
     state: UIState<List<Car>>,
-    selectedCar: Car?,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
-    coroutineScope: CoroutineScope,
-    tryAgain: () -> Unit
+    selectedCar: Car?
 ) {
     val mapView = rememberMapViewWithLifecycle()
     MapViewContainer(mapView, state, selectedCar)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetContent(state: UIState<List<Car>>, onItemClicked: (item: Car) -> Job) = Box(
+fun BottomSheetContent(
+    state: UIState<List<Car>>,
+    onItemClicked: (item: Car) -> Job,
+    bottomSheetState: BottomSheetState
+) = Box(
     Modifier
         .fillMaxWidth()
         .height(400.dp)
 ) {
     if (state.isSuccess()) {
-        LazyColumn {
-            item {
-                state.data?.forEach { item ->
-                    CarCardItem(item) {
-                        onItemClicked(item)
-                    }
-                }
-            }
+        if (bottomSheetState.isExpanded) {
+            BottomSheetSuccessAndExpandedContent(state, onItemClicked)
+        } else {
+            BottomSheetSuccessAndCollapsedContent(state)
         }
     } else {
         Text(
             modifier = Modifier.padding(16.dp),
             text = "Still loading, try again in a few seconds ..."
         )
+    }
+}
+
+@Composable
+fun BottomSheetSuccessAndCollapsedContent(state: UIState<List<Car>>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(sheetPeekHeight.dp)
+            .padding(start = defaultPadding.dp, top = defaultPadding.dp, bottom = defaultPadding.dp)
+    ) {
+        state.data?.take(5)?.forEach {
+            SmallItemThumbnail(it)
+        }
+    }
+}
+
+@Composable
+fun SmallItemThumbnail(item: Car) {
+    GlideImage(
+        imageModel = item.carImageUrl,
+        contentScale = ContentScale.Inside,
+        placeHolder = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
+        error = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
+        modifier = Modifier
+            .padding(end = defaultPadding.dp)
+            .size((sheetPeekHeight - defaultPadding).dp)
+            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true)
+    )
+}
+
+@Composable
+private fun BottomSheetSuccessAndExpandedContent(
+    state: UIState<List<Car>>,
+    onItemClicked: (item: Car) -> Job
+) {
+    LazyColumn {
+        item {
+            state.data?.forEach { item ->
+                CarCardItem(item) {
+                    onItemClicked(item)
+                }
+            }
+        }
     }
 }
 
@@ -210,4 +250,6 @@ fun ContentSuccessPreview() {
 private const val InitialZoom = 5f
 const val MinZoom = 2f
 const val MaxZoom = 20f
+const val sheetPeekHeight = 80
+const val defaultPadding = 16
 val defaultLatLong = LatLng(51.362331, 9.674301)
