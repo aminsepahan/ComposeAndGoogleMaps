@@ -5,7 +5,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.amin.composeandmaps.MainActivity
 import com.amin.composeandmaps.R
-import com.amin.composeandmaps.ui.screens.SplashScreenContent
+import com.amin.composeandmaps.screens.splash.SplashScreenContent
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

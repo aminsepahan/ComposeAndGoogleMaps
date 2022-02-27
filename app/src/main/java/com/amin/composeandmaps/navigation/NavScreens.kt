@@ -7,6 +7,10 @@ sealed class NavScreen(val route: String) {
     object SplashScreen : NavScreen("Splash")
     object WelcomeScreen : NavScreen("Welcome")
     object MainScreen : NavScreen("Main")
+    object MapScreen : NavScreen("Map")
+    object CarsScreen : NavScreen("Cars")
+    object MenuScreen : NavScreen("Menu")
+    object DemoScreen : NavScreen("Demo")
 }
 
 class NavActions(navController: NavHostController, activity: Activity) {
@@ -19,10 +23,26 @@ class NavActions(navController: NavHostController, activity: Activity) {
         }
     }
 
-    val navigateToMainScreenAndClearBackStack: () -> Unit = {
-        navController.navigate(route = NavScreen.MainScreen.route) {
+    val navigateToMenuScreenAndClearBackStack: () -> Unit = {
+        navController.navigate(route = NavScreen.MenuScreen.route) {
             popUpTo(idForClearingBackStack)
         }
+    }
+
+    val navigateToMainScreen: () -> Unit = {
+        navController.navigate(route = NavScreen.MainScreen.route)
+    }
+
+    val navigateToMapScreen: () -> Unit = {
+        navController.navigate(route = NavScreen.MapScreen.route)
+    }
+
+    val navigateToCarsScreen: () -> Unit = {
+        navController.navigate(route = NavScreen.CarsScreen.route)
+    }
+
+    val navigateToDemoScreen: () -> Unit = {
+        navController.navigate(route = NavScreen.DemoScreen.route)
     }
 
     val upPress: () -> Unit = {

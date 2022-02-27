@@ -7,14 +7,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.amin.composeandmaps.MainActivity
 import com.amin.composeandmaps.R
-import com.amin.composeandmaps.ui.screens.welcome.WelcomeScreen
-import com.amin.composeandmaps.ui.screens.welcome.WelcomeScreenContent
-import com.amin.composeandmaps.ui.screens.welcome.WelcomeViewModel
-import org.junit.FixMethodOrder
+import com.amin.composeandmaps.screens.welcome.WelcomeScreen
+import com.amin.composeandmaps.screens.welcome.WelcomeViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 
 /* You will need a fresh start for this test,
 because if the app already had the permissions it will fail */

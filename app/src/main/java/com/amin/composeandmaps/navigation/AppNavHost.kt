@@ -11,9 +11,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.amin.composeandmaps.navigation.NavScreen.*
-import com.amin.composeandmaps.ui.screens.SplashScreen
-import com.amin.composeandmaps.ui.screens.main.MainScreen
-import com.amin.composeandmaps.ui.screens.welcome.WelcomeScreen
+import com.amin.composeandmaps.screens.splash.SplashScreen
+import com.amin.composeandmaps.screens.map_and_cars.MainScreen
+import com.amin.composeandmaps.screens.menu.MenuScreen
+import com.amin.composeandmaps.screens.welcome.WelcomeScreen
 import com.google.accompanist.insets.ProvideWindowInsets
 
 
@@ -35,17 +36,23 @@ fun AppNavHost(
                     navigateToWelcomeScreen = actions.navigateToWelcomeScreenAndClearBackStack
                 )
             }
-
             composable(WelcomeScreen.route) {
                 WelcomeScreen(
                     viewModel = hiltViewModel(),
-                    navigateToMainScreen = actions.navigateToMainScreenAndClearBackStack
+                    navigateToMenuScreen = actions.navigateToMenuScreenAndClearBackStack
                 )
             }
-
             composable(MainScreen.route) {
                 MainScreen(
                     viewModel = hiltViewModel(),
+                )
+            }
+            composable(MenuScreen.route) {
+                MenuScreen(
+                    navigateToMainScreen = actions.navigateToMainScreen,
+                    navigateToCarsScreen = actions.navigateToCarsScreen,
+                    navigateToMapScreen = actions.navigateToMapScreen,
+                    navigateToDemoScreen = actions.navigateToDemoScreen,
                 )
             }
         }
