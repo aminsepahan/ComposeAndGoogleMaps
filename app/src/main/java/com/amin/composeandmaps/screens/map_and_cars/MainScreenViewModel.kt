@@ -45,7 +45,7 @@ class CarsViewModel @Inject constructor(
     fun loadItems(newBounds: LatLngBounds) {
         viewModelScope.launch {
             _carsState.postValue(loading())
-            val cars = carRepository.getAllCars()
+            val cars = carRepository.getAllCars(newBounds)
             _carsState.postValue(UIState.Success(cars))
         }
     }
@@ -73,7 +73,7 @@ class CarsViewModel @Inject constructor(
     fun onCameraBoundsChanged(newBounds: LatLngBounds) {
         if (currentCameraBounds == null) {
             currentCameraBounds = newBounds
-            loadItems(newBounds)
+            _searchThisAreaButtonText.postValue(SearchThisAreaButtonState.VISIBLE)
         } else {
             currentCameraBounds?.let {
                 val previousLocation = Location("previous location")
@@ -95,6 +95,10 @@ class CarsViewModel @Inject constructor(
 
     override fun unregisterLocationUpdates() {
         aminLocationManager.stopRequestingLocationUpdate()
+    }
+
+    fun searchWithNewBounds(it: LatLngBounds) {
+        loadItems(it)
     }
 }
 

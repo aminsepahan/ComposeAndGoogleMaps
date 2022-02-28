@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.screens.map_and_cars.ImageItem
 import com.amin.composeandmaps.shared.theme.AppCard
@@ -43,8 +44,8 @@ fun ListItem(item: Car, onCarCardClicked: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ImageItem(imageUrl = item.carImageUrl)
-            Text(text = "${item.name}, ${item.modelName}")
+            ImageItem(imageResourceId = R.drawable.pooling)
+            Text(text = "${item.fleetType.title}, ${item.heading}")
         }
     }
 }

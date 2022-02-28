@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amin.composeandmaps.navigation.NavScreen
-import com.amin.composeandmaps.shared.util.Constants.SplashScreenDelay
+import com.amin.composeandmaps.shared.util.splashScreenDelay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class SplashViewModel @Inject constructor(
 
     private fun startApp() {
         viewModelScope.launch {
-            delay(SplashScreenDelay)
+            delay(splashScreenDelay)
             _startAppNavigation.postValue(NavScreen.WelcomeScreen.route)
         }
     }

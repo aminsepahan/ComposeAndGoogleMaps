@@ -7,7 +7,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.viewinterop.AndroidView
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
-import com.amin.composeandmaps.screens.map_and_cars.defaultLatLong
+import com.amin.composeandmaps.shared.util.defaultLatLong
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
 import com.google.android.libraries.maps.model.BitmapDescriptorFactory
@@ -30,31 +30,31 @@ fun MapViewContainer(
     }
     LaunchedEffect(map) {
         val googleMap = map.awaitMap()
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPosition))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPosition, 9f))
         googleMap.setOnCameraIdleListener {
             onCameraChanged(googleMap.projection.visibleRegion.latLngBounds)
         }
     }
-
-    val coroutineScope = rememberCoroutineScope()
-    AndroidView({ map }) { mapView ->
-        coroutineScope.launch {
-            val googleMap = mapView.awaitMap()
-            googleMap.uiSettings.isZoomControlsEnabled = true
-            var zoom = 9f
-            var destination = currentLocation
-            if (selectedCar != null) {
-                zoom = 15f
-                destination = selectedCar.latLong
-            }
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, zoom))
-            itemList?.forEach { car ->
-                val markerOptionsDestination = MarkerOptions()
-                    .title("${car.name} ${car.modelName}")
-                    .position(car.latLong)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car))
-                googleMap.addMarker(markerOptionsDestination)
-            }
+    LaunchedEffect(currentLocation) {
+        val googleMap = map.awaitMap()
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 11f))
+    }
+    LaunchedEffect(key1 = selectedCar) {
+        if (selectedCar != null) {
+            val googleMap = map.awaitMap()
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedCar.latLng, 14f))
         }
     }
+    LaunchedEffect(key1 = itemList) {
+        val googleMap = map.awaitMap()
+        googleMap.clear()
+        itemList?.forEach { car ->
+            val markerOptionsDestination = MarkerOptions()
+                .title("${car.fleetType.title} ${car.heading}")
+                .position(car.latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car))
+            googleMap.addMarker(markerOptionsDestination)
+        }
+    }
+    AndroidView({ map })
 }

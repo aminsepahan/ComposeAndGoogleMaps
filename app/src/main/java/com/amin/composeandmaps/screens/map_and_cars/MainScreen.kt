@@ -1,6 +1,7 @@
 package com.amin.composeandmaps.screens.map_and_cars
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,20 +10,23 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.screens.cars.CarList
-import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.*
+import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.HIDDEN
+import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.LOADING
+import com.amin.composeandmaps.shared.helper.toImageResourceId
 import com.amin.composeandmaps.shared.theme.screenBack
 import com.amin.composeandmaps.shared.util.UIState
+import com.amin.composeandmaps.shared.util.defaultLatLong
+import com.amin.composeandmaps.shared.util.defaultPadding
+import com.amin.composeandmaps.shared.util.sheetPeekHeight
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
-import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
@@ -35,20 +39,21 @@ fun MainScreen(
     var currentCameraBounds: LatLngBounds? by remember {
         mutableStateOf(null)
     }
-    val searchThisAreaButtonState by viewModel.searchThisAreaButtonText.observeAsState(LOADING)
+    val searchThisAreaButtonState by viewModel.searchThisAreaButtonText.observeAsState(HIDDEN)
     MainScreenContent(
         state = carsState,
-        searchWithNewBounds = {
-            currentCameraBounds?.let {
-                viewModel.loadItems(it)
-            }
-        },
         currentLocation = currentLocation,
+        searchThisAreaButtonState = searchThisAreaButtonState,
         onLocationClicked = {
             viewModel.registerLocationUpdates()
         },
-        searchThisAreaButtonState = searchThisAreaButtonState,
+        searchWithNewBounds = {
+            currentCameraBounds?.let {
+                viewModel.searchWithNewBounds(it)
+            }
+        },
         currentCameraBoundsChanged = { newBounds ->
+            currentCameraBounds = newBounds
             viewModel.onCameraBoundsChanged(newBounds)
         }
     )
@@ -92,7 +97,10 @@ fun MainScreenContent(
             currentLocation = currentLocation,
             scope = scope,
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            onCameraChanged = currentCameraBoundsChanged,
+            onCameraChanged = {
+                selectedCar = null
+                currentCameraBoundsChanged(it)
+            },
             searchThisAreaButtonClicked = searchWithNewBounds,
             onLocationClicked = onLocationClicked,
             searchThisAreaButtonState = searchThisAreaButtonState
@@ -141,41 +149,32 @@ fun BottomSheetSuccessAndCollapsedContent(state: UIState<List<Car>>) {
 
 @Composable
 fun SmallItemThumbnail(item: Car) {
-    GlideImage(
-        imageModel = item.carImageUrl,
-        contentScale = ContentScale.Inside,
-        placeHolder = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
-        error = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
+    Image(
+        painter = painterResource(item.fleetType.toImageResourceId()),
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .padding(end = defaultPadding.dp)
             .size((sheetPeekHeight - defaultPadding).dp)
-            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true)
+            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true),
+        contentDescription = "car image"
     )
 }
 
 
 @Composable
-fun ImageItem(imageUrl: String) {
-    GlideImage(
-        imageModel = imageUrl,
-        contentScale = ContentScale.Inside,
-        placeHolder = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
-        error = ImageVector.vectorResource(R.drawable.ic_simple_car_side),
+fun ImageItem(imageResourceId: Int) {
+    Image(
+        painter = painterResource(imageResourceId),
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .size(60.dp)
-            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true)
+            .shadow(0.dp, shape = RoundedCornerShape(6.dp), clip = true),
+        contentDescription = "Car image"
     )
 }
 
 @Preview
 @Composable
 fun ImageItemPreview() {
-    ImageItem(imageUrl = "https://cdn.sixt.io/codingtask/images/mini.png")
+    ImageItem(imageResourceId = R.drawable.pooling)
 }
-
-private const val InitialZoom = 5f
-const val MinZoom = 2f
-const val MaxZoom = 20f
-const val sheetPeekHeight = 80
-const val defaultPadding = 16
-val defaultLatLong = LatLng(51.362331, 9.674301)

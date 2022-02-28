@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.screens.cars.CarListPreview
 import com.amin.composeandmaps.screens.map_and_cars.TopActionBarHiddenPreview
+import com.amin.composeandmaps.screens.menu.MenuButton
 
 @Preview
 @Composable
@@ -21,6 +22,8 @@ fun DemoScreen() {
         .background(Color.LightGray)
         .padding(horizontal = 10.dp)
         .verticalScroll(rememberScrollState())) {
+        DemoSpacer()
+        MenuButton(text = "Demo UI elements", onClick = { }, colorNumber = 3)
         DemoSpacer()
         TopActionBarHiddenPreview()
         DemoSpacer()

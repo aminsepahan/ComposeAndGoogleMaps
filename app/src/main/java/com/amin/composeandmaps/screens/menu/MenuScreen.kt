@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.screens.demo.DemoSpacer
-import com.amin.composeandmaps.screens.map_and_cars.defaultPadding
 import com.amin.composeandmaps.shared.theme.*
+import com.amin.composeandmaps.shared.util.defaultPadding
 
 @Composable
 fun MenuScreen(
@@ -54,6 +54,7 @@ fun MenuButton(onClick: () -> Unit, text: String, colorNumber: Int) {
     Button(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp)
+            .height(60.dp)
             .fillMaxWidth(0.70f),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -61,7 +62,7 @@ fun MenuButton(onClick: () -> Unit, text: String, colorNumber: Int) {
         )
     ) {
         Text(
-            text = text, color = menuColorDarkList[colorNumber]
+            text = text, color = menuColorDarkList[colorNumber], style = Typography.h6
         )
     }
 }

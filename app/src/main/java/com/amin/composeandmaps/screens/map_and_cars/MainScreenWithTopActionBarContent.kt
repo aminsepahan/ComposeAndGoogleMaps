@@ -22,7 +22,7 @@ import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.screens.demo.DemoSpacer
 import com.amin.composeandmaps.screens.map.MapViewContainer
 import com.amin.composeandmaps.shared.theme.Purple500
-import com.amin.composeandmaps.ui.utils.rememberMapViewWithLifecycle
+import com.amin.composeandmaps.shared.util.rememberMapViewWithLifecycle
 import com.amin.composeandmaps.shared.util.UIState
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds

@@ -1,7 +1,6 @@
-package com.amin.composeandmaps.ui.utils
+package com.amin.composeandmaps.shared.util
 
 import android.os.Bundle
-import androidx.annotation.FloatRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -10,9 +9,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.amin.composeandmaps.R
-import com.amin.composeandmaps.screens.map_and_cars.MaxZoom
-import com.amin.composeandmaps.screens.map_and_cars.MinZoom
-import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.MapView
 
 /**
@@ -52,11 +48,3 @@ private fun getMapLifecycleObserver(mapView: MapView): LifecycleEventObserver =
             else -> throw IllegalStateException()
         }
     }
-
-fun GoogleMap.setZoom(
-    @FloatRange(from = MinZoom.toDouble(), to = MaxZoom.toDouble()) zoom: Float
-) {
-    resetMinMaxZoomPreference()
-    setMinZoomPreference(zoom)
-    setMaxZoomPreference(zoom)
-}
