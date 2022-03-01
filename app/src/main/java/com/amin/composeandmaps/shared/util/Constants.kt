@@ -9,4 +9,5 @@ const val MinZoom = 2f
 const val MaxZoom = 20f
 const val sheetPeekHeight = 80
 const val defaultPadding = 16
+const val newSearchNeededThreshold = 10000
 val defaultLatLong = LatLng(53.548753, 9.999804)

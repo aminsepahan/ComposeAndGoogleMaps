@@ -20,11 +20,10 @@ import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.screens.demo.DemoSpacer
-import com.amin.composeandmaps.screens.map.MapViewContainer
+import com.amin.composeandmaps.screens.map.MapView
+import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.*
 import com.amin.composeandmaps.shared.theme.Purple500
 import com.amin.composeandmaps.shared.util.rememberMapViewWithLifecycle
-import com.amin.composeandmaps.shared.util.UIState
-import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -32,30 +31,28 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreenWithTopActionBarContent(
-    state: UIState<List<Car>>,
+    state: MainViewState,
     selectedCar: Car?,
-    currentLocation: LatLng,
     scope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onCameraChanged: (bounds: LatLngBounds) -> Unit,
     onLocationClicked: () -> Unit,
     searchThisAreaButtonClicked: () -> Unit,
-    searchThisAreaButtonState: SearchThisAreaButtonState,
 ) {
     Box {
         val mapView = rememberMapViewWithLifecycle()
-        MapViewContainer(
+        MapView(
             map = mapView,
-            itemList = state.data,
+            itemList = state.cars,
             selectedCar = selectedCar,
             onCameraChanged = onCameraChanged,
-            currentLocation = currentLocation
+            currentLocation = state.currentLocation
         )
         MainScreenTopActionBar(
             scope = scope,
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             onLocationClicked = onLocationClicked,
-            searchThisAreaButtonState = searchThisAreaButtonState,
+            searchThisAreaButtonState = state.searchAreaButtonText,
             searchThisAreaButtonClicked = searchThisAreaButtonClicked
         )
     }
@@ -82,37 +79,33 @@ private fun MainScreenTopActionBar(
                 .shadow(shape = RoundedCornerShape(5.dp), elevation = 3.dp)
                 .background(color = Color.White)
         ) {
-            if (searchThisAreaButtonState != SearchThisAreaButtonState.HIDDEN) {
-                Button(
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 4.dp)
-                        .fillMaxWidth(0.70f),
-                    onClick = {
-                        searchThisAreaButtonClicked()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = when (searchThisAreaButtonState) {
-                            SearchThisAreaButtonState.LOADING -> Color.White
-                            SearchThisAreaButtonState.ERROR_TRY_AGAIN -> Color.Red
-                            else -> Purple500
-                        }
-                    )
-                ) {
-                    val buttonText = when (searchThisAreaButtonState) {
-                        SearchThisAreaButtonState.HIDDEN -> ""
-                        SearchThisAreaButtonState.LOADING -> stringResource(id = R.string.searching_for_items_here)
-                        SearchThisAreaButtonState.VISIBLE -> stringResource(R.string.search_this_area)
-                        SearchThisAreaButtonState.ERROR_TRY_AGAIN -> stringResource(R.string.something_went_wrong_try_again)
+            Button(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 4.dp)
+                    .fillMaxWidth(0.70f),
+                onClick = {
+                    searchThisAreaButtonClicked()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = when (searchThisAreaButtonState) {
+                        VISIBLE -> Purple500
+                        ERROR_TRY_AGAIN -> Color.Red
+                        else -> Color.White
                     }
-                    Text(
-                        text = buttonText, color = when (searchThisAreaButtonState) {
-                            SearchThisAreaButtonState.LOADING -> Color.Gray
-                            else -> Color.White
-                        }
-                    )
+                )
+            ) {
+                val buttonText = when (searchThisAreaButtonState) {
+                    HIDDEN -> "Move Further"
+                    LOADING -> stringResource(id = R.string.searching_for_items_here)
+                    VISIBLE -> stringResource(R.string.search_this_area)
+                    ERROR_TRY_AGAIN -> stringResource(R.string.something_went_wrong_try_again)
                 }
-            } else {
-                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Text(
+                    text = buttonText, color = when (searchThisAreaButtonState) {
+                        LOADING, HIDDEN -> Color.Gray
+                        else -> Color.White
+                    }
+                )
             }
             MapIconButton(imageVector = Icons.Filled.List, onClicked = {
                 toggleBottomSheet(scope, bottomSheetScaffoldState)
@@ -132,7 +125,7 @@ fun TopActionBarHiddenPreview() {
             scope = rememberCoroutineScope(),
             bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onLocationClicked = { },
-            searchThisAreaButtonState = SearchThisAreaButtonState.LOADING,
+            searchThisAreaButtonState = LOADING,
             searchThisAreaButtonClicked = {}
         )
         DemoSpacer()
@@ -140,7 +133,7 @@ fun TopActionBarHiddenPreview() {
             scope = rememberCoroutineScope(),
             bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onLocationClicked = { },
-            searchThisAreaButtonState = SearchThisAreaButtonState.VISIBLE,
+            searchThisAreaButtonState = VISIBLE,
             searchThisAreaButtonClicked = {}
         )
         DemoSpacer()
@@ -148,7 +141,7 @@ fun TopActionBarHiddenPreview() {
             scope = rememberCoroutineScope(),
             bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onLocationClicked = { },
-            searchThisAreaButtonState = SearchThisAreaButtonState.ERROR_TRY_AGAIN,
+            searchThisAreaButtonState = ERROR_TRY_AGAIN,
             searchThisAreaButtonClicked = {}
         )
         DemoSpacer()
@@ -156,7 +149,7 @@ fun TopActionBarHiddenPreview() {
             scope = rememberCoroutineScope(),
             bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onLocationClicked = { },
-            searchThisAreaButtonState = SearchThisAreaButtonState.HIDDEN,
+            searchThisAreaButtonState = HIDDEN,
             searchThisAreaButtonClicked = {}
         )
         DemoSpacer()

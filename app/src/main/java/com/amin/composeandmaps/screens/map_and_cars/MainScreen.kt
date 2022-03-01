@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
@@ -17,15 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.screens.cars.CarList
-import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.HIDDEN
-import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.LOADING
 import com.amin.composeandmaps.shared.helper.toImageResourceId
 import com.amin.composeandmaps.shared.theme.screenBack
-import com.amin.composeandmaps.shared.util.UIState
-import com.amin.composeandmaps.shared.util.defaultLatLong
+import com.amin.composeandmaps.shared.util.OperationState
 import com.amin.composeandmaps.shared.util.defaultPadding
 import com.amin.composeandmaps.shared.util.sheetPeekHeight
-import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import kotlinx.coroutines.launch
 
@@ -34,16 +29,12 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: CarsViewModel,
 ) {
-    val carsState by viewModel.carsState.observeAsState(UIState.Idle())
-    val currentLocation by viewModel.currentLocation.collectAsState(initial = defaultLatLong)
+    val state by viewModel.state.collectAsState()
     var currentCameraBounds: LatLngBounds? by remember {
         mutableStateOf(null)
     }
-    val searchThisAreaButtonState by viewModel.searchThisAreaButtonText.observeAsState(HIDDEN)
     MainScreenContent(
-        state = carsState,
-        currentLocation = currentLocation,
-        searchThisAreaButtonState = searchThisAreaButtonState,
+        state = state,
         onLocationClicked = {
             viewModel.registerLocationUpdates()
         },
@@ -62,12 +53,10 @@ fun MainScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreenContent(
-    state: UIState<List<Car>>,
+    state: MainViewState,
     searchWithNewBounds: () -> Unit,
-    currentLocation: LatLng,
     onLocationClicked: () -> Unit,
     currentCameraBoundsChanged: (LatLngBounds) -> Unit,
-    searchThisAreaButtonState: SearchThisAreaButtonState
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -76,6 +65,11 @@ fun MainScreenContent(
         mutableStateOf(null)
     }
     val scope = rememberCoroutineScope()
+    LaunchedEffect(key1 = state.operationState) {
+        if(state.operationState is OperationState.Loading) {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        }
+    }
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +88,6 @@ fun MainScreenContent(
         MainScreenWithTopActionBarContent(
             state = state,
             selectedCar = selectedCar,
-            currentLocation = currentLocation,
             scope = scope,
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             onCameraChanged = {
@@ -103,7 +96,6 @@ fun MainScreenContent(
             },
             searchThisAreaButtonClicked = searchWithNewBounds,
             onLocationClicked = onLocationClicked,
-            searchThisAreaButtonState = searchThisAreaButtonState
         )
     }
 }
@@ -111,7 +103,7 @@ fun MainScreenContent(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetContent(
-    state: UIState<List<Car>>,
+    state: MainViewState,
     onItemClicked: (item: Car) -> Unit,
     bottomSheetState: BottomSheetState
 ) = Box(
@@ -119,29 +111,44 @@ fun BottomSheetContent(
         .fillMaxWidth()
         .height(400.dp)
 ) {
-    if (state.isSuccess()) {
-        if (bottomSheetState.isExpanded) {
-            CarList(state, onItemClicked)
-        } else {
-            BottomSheetSuccessAndCollapsedContent(state)
+    when (state.operationState) {
+        is OperationState.Success -> {
+            if (bottomSheetState.isExpanded) {
+                CarList(state.cars, onItemClicked)
+            } else {
+                BottomSheetSuccessAndCollapsedContent(state.cars)
+            }
         }
-    } else {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "Still loading, try again in a few seconds ..."
-        )
+        is OperationState.Loading -> {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Still loading, try again in a few seconds ..."
+            )
+        }
+        is OperationState.Error -> {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Something went wrong try again!"
+            )
+        }
+        else -> {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Press the search button to get the list of cars for this area"
+            )
+        }
     }
 }
 
 @Composable
-fun BottomSheetSuccessAndCollapsedContent(state: UIState<List<Car>>) {
+fun BottomSheetSuccessAndCollapsedContent(cars: List<Car>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(sheetPeekHeight.dp)
             .padding(start = defaultPadding.dp, top = defaultPadding.dp, bottom = defaultPadding.dp)
     ) {
-        state.data?.take(5)?.forEach {
+        cars.take(5).forEach {
             SmallItemThumbnail(it)
         }
     }

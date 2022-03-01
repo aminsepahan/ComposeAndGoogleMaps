@@ -3,11 +3,12 @@ package com.amin.composeandmaps.screens.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.viewinterop.AndroidView
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
+import com.amin.composeandmaps.data.models.FleetType
 import com.amin.composeandmaps.shared.util.defaultLatLong
+import com.amin.composeandmaps.shared.util.rememberMapViewWithLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
 import com.google.android.libraries.maps.model.BitmapDescriptorFactory
@@ -15,10 +16,21 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
-import kotlinx.coroutines.launch
+
+//@Composable
+//fun MapScreen() {
+//    val mapView = rememberMapViewWithLifecycle()
+//    MapView(
+//        map = mapView,
+//        itemList = state.data,
+//        selectedCar = selectedCar,
+//        onCameraChanged = onCameraChanged,
+//        currentLocation = currentLocation
+//    )
+//}
 
 @Composable
-fun MapViewContainer(
+fun MapView(
     map: MapView,
     itemList: List<Car>?,
     selectedCar: Car?,
@@ -52,7 +64,14 @@ fun MapViewContainer(
             val markerOptionsDestination = MarkerOptions()
                 .title("${car.fleetType.title} ${car.heading}")
                 .position(car.latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car))
+                .icon(
+                    BitmapDescriptorFactory.fromResource(
+                        when (car.fleetType) {
+                            FleetType.POOLING -> R.drawable.ic_car_pooling
+                            FleetType.TAXI -> R.drawable.ic_car_taxi
+                        }
+                    )
+                )
             googleMap.addMarker(markerOptionsDestination)
         }
     }

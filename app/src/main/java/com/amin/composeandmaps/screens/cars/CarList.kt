@@ -11,18 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
+import com.amin.composeandmaps.data.models.FleetType
 import com.amin.composeandmaps.screens.map_and_cars.ImageItem
 import com.amin.composeandmaps.shared.theme.AppCard
-import com.amin.composeandmaps.shared.util.UIState
+import com.amin.composeandmaps.shared.util.defaultPadding
 
 @Composable
 fun CarList(
-    state: UIState<List<Car>>,
+    cars: List<Car>,
     onItemClicked: (item: Car) -> Unit
 ) {
     LazyColumn {
         item {
-            state.data?.forEach { item ->
+            cars.forEach { item ->
                 ListItem(item) {
                     onItemClicked(item)
                 }
@@ -44,8 +45,16 @@ fun ListItem(item: Car, onCarCardClicked: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ImageItem(imageResourceId = R.drawable.pooling)
-            Text(text = "${item.fleetType.title}, ${item.heading}")
+            ImageItem(
+                imageResourceId = when (item.fleetType) {
+                    FleetType.POOLING -> R.drawable.pooling
+                    FleetType.TAXI -> R.drawable.taxi
+                }
+            )
+            Text(
+                modifier = Modifier.padding(start = defaultPadding.dp),
+                text = "${item.fleetType.title}, Heading: ${item.heading.toFloat()}"
+            )
         }
     }
 }
