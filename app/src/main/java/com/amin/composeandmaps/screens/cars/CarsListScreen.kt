@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,6 +22,7 @@ import com.amin.composeandmaps.screens.map.MapViewModel
 import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState
 import com.amin.composeandmaps.screens.map_and_cars.TopActionBarButton
 import com.amin.composeandmaps.shared.util.defaultPadding
+import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 
 @Composable
@@ -43,8 +45,9 @@ fun CarListContent(cars: List<Car>, onSearchClicked: (LatLngBounds) -> Unit) {
 
 @Composable
 fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
-    var northwest by rememberSaveable { mutableStateOf(Pair("", "")) }
-    var southeast by rememberSaveable { mutableStateOf(Pair("", "")) }
+    var northwest by rememberSaveable { mutableStateOf(Pair("53.694865", "9.757589")) }
+    var southeast by rememberSaveable { mutableStateOf(Pair("53.394655", "10.099891")) }
+    var errorMessage by rememberSaveable { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -57,6 +60,7 @@ fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
                     title = "northwest lat",
                     text = northwest.first,
                     onTextChange = {
+                        errorMessage = ""
                         northwest = northwest.copy(first = it)
                     },
                     onKeyboardDoneAction = {
@@ -66,6 +70,7 @@ fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
                     title = "northwest long",
                     text = northwest.second,
                     onTextChange = {
+                        errorMessage = ""
                         northwest = northwest.copy(second = it)
                     },
                     onKeyboardDoneAction = {
@@ -78,6 +83,7 @@ fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
                     title = "southeast lat",
                     text = southeast.first,
                     onTextChange = {
+                        errorMessage = ""
                         southeast = southeast.copy(first = it)
                     },
                     onKeyboardDoneAction = {
@@ -87,6 +93,7 @@ fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
                     title = "southeast long",
                     text = southeast.second,
                     onTextChange = {
+                        errorMessage = ""
                         southeast = southeast.copy(second = it)
                     },
                     onKeyboardDoneAction = {
@@ -98,10 +105,24 @@ fun SearchBar(onSearchClicked: (LatLngBounds) -> Unit) {
         TopActionBarButton(
             modifier = Modifier.align(CenterHorizontally),
             searchThisAreaButtonClicked = {
-
+                try {
+                    //because LatLngBounds take northeast and southwest as constructors
+                    val northwestLatLng =
+                        LatLng(southeast.first.toDouble(), northwest.second.toDouble())
+                    val southeastLatLng =
+                        LatLng(northwest.first.toDouble(), southeast.second.toDouble())
+                    onSearchClicked(LatLngBounds(northwestLatLng, southeastLatLng))
+                } catch (ex: NumberFormatException) {
+                    errorMessage = "The numbers are not double and/or not valid"
+                } catch (ex: IllegalArgumentException) {
+                    errorMessage = ex.localizedMessage ?: "Numbers are invalid"
+                }
             },
             searchThisAreaButtonState = SearchThisAreaButtonState.VISIBLE
         )
+        if (errorMessage.isNotEmpty()) {
+            Text(text = errorMessage, color = Color.Red)
+        }
     }
 }
 
