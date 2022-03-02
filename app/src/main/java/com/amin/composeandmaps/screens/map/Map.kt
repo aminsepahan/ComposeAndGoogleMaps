@@ -8,7 +8,6 @@ import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.data.models.FleetType
 import com.amin.composeandmaps.shared.util.defaultLatLong
-import com.amin.composeandmaps.shared.util.rememberMapViewWithLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
 import com.google.android.libraries.maps.model.BitmapDescriptorFactory
@@ -16,18 +15,6 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
-
-//@Composable
-//fun MapScreen() {
-//    val mapView = rememberMapViewWithLifecycle()
-//    MapView(
-//        map = mapView,
-//        itemList = state.data,
-//        selectedCar = selectedCar,
-//        onCameraChanged = onCameraChanged,
-//        currentLocation = currentLocation
-//    )
-//}
 
 @Composable
 fun MapView(

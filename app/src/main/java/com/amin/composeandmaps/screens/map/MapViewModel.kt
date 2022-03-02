@@ -1,4 +1,4 @@
-package com.amin.composeandmaps.screens.map_and_cars
+package com.amin.composeandmaps.screens.map
 
 import android.location.Location
 import androidx.annotation.RequiresPermission
@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.amin.aminChallenge.shared.manager.location.LocationProvider
 import com.amin.composeandmaps.data.models.Car
 import com.amin.composeandmaps.data.usecases.GetItemsForLocationUseCase
+import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState
 import com.amin.composeandmaps.screens.map_and_cars.SearchThisAreaButtonState.*
 import com.amin.composeandmaps.shared.manager.location.AminLocationManager
 import com.amin.composeandmaps.shared.util.*
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class MapViewModel @Inject constructor(
     private val getItemsForLocationUseCase: GetItemsForLocationUseCase,
     private val aminLocationManager: AminLocationManager,
 ) : ViewModel(), LocationProvider {
@@ -34,9 +35,9 @@ class MainViewModel @Inject constructor(
     private val operationState = MutableStateFlow(idle() as OperationState)
 
     // Holds our view state which the UI collects via [state]
-    private val _state = MutableStateFlow(MainViewState())
+    private val _state = MutableStateFlow(MapViewState())
 
-    val state: StateFlow<MainViewState>
+    val state: StateFlow<MapViewState>
         get() = _state
 
     init {
@@ -51,11 +52,10 @@ class MainViewModel @Inject constructor(
                 operationState,
                 searchThisAreaButtonText
             ) { cars, currentLocation, operationState, searchThisAreaButtonText ->
-                MainViewState(
+                MapViewState(
                     cars = cars,
                     currentLocation = currentLocation,
                     searchAreaButtonText = searchThisAreaButtonText,
-                    operationState = operationState
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -130,9 +130,8 @@ class MainViewModel @Inject constructor(
     }
 }
 
-data class MainViewState(
+data class MapViewState(
     val cars: List<Car> = emptyList(),
     val currentLocation: LatLng = defaultLatLong,
     val searchAreaButtonText: SearchThisAreaButtonState = HIDDEN,
-    val operationState: OperationState = idle(),
 )

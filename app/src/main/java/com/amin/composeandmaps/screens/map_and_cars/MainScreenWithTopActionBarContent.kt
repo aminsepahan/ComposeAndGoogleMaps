@@ -79,34 +79,10 @@ private fun MainScreenTopActionBar(
                 .shadow(shape = RoundedCornerShape(5.dp), elevation = 3.dp)
                 .background(color = Color.White)
         ) {
-            Button(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 4.dp)
-                    .fillMaxWidth(0.70f),
-                onClick = {
-                    searchThisAreaButtonClicked()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = when (searchThisAreaButtonState) {
-                        VISIBLE -> Purple500
-                        ERROR_TRY_AGAIN -> Color.Red
-                        else -> Color.White
-                    }
-                )
-            ) {
-                val buttonText = when (searchThisAreaButtonState) {
-                    HIDDEN -> "Move Further"
-                    LOADING -> stringResource(id = R.string.searching_for_items_here)
-                    VISIBLE -> stringResource(R.string.search_this_area)
-                    ERROR_TRY_AGAIN -> stringResource(R.string.something_went_wrong_try_again)
-                }
-                Text(
-                    text = buttonText, color = when (searchThisAreaButtonState) {
-                        LOADING, HIDDEN -> Color.Gray
-                        else -> Color.White
-                    }
-                )
-            }
+            TopActionBarButton(
+                searchThisAreaButtonClicked = searchThisAreaButtonClicked,
+                searchThisAreaButtonState = searchThisAreaButtonState
+            )
             MapIconButton(imageVector = Icons.Filled.List, onClicked = {
                 toggleBottomSheet(scope, bottomSheetScaffoldState)
             })
@@ -114,6 +90,46 @@ private fun MainScreenTopActionBar(
         }
 
     }
+}
+
+@Composable
+fun TopActionBarButton(
+    modifier: Modifier = Modifier,
+    searchThisAreaButtonClicked: () -> Unit,
+    searchThisAreaButtonState: SearchThisAreaButtonState
+) {
+    Button(
+        modifier = modifier
+            .padding(start = 8.dp, end = 4.dp)
+            .fillMaxWidth(0.70f),
+        onClick = {
+            searchThisAreaButtonClicked()
+        },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = when (searchThisAreaButtonState) {
+                VISIBLE -> Purple500
+                ERROR_TRY_AGAIN -> Color.Red
+                else -> Color.White
+            }
+        )
+    ) {
+        val buttonText = when (searchThisAreaButtonState) {
+            HIDDEN -> "Move Further"
+            LOADING -> stringResource(id = R.string.searching_for_items_here)
+            VISIBLE -> stringResource(R.string.search_this_area)
+            ERROR_TRY_AGAIN -> stringResource(R.string.something_went_wrong_try_again)
+        }
+        Text(
+            text = buttonText, color = when (searchThisAreaButtonState) {
+                LOADING, HIDDEN -> Color.Gray
+                else -> Color.White
+            }
+        )
+    }
+}
+
+enum class SearchThisAreaButtonState {
+    HIDDEN, LOADING, VISIBLE, ERROR_TRY_AGAIN
 }
 
 @OptIn(ExperimentalMaterialApi::class)

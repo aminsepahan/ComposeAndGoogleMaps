@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("MissingPermission")
 @Composable
 fun MainScreen(
-    viewModel: CarsViewModel,
+    viewModel: MainViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     var currentCameraBounds: LatLngBounds? by remember {

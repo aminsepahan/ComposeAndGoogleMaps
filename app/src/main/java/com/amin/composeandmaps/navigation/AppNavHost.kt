@@ -11,6 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.amin.composeandmaps.navigation.NavScreen.*
+import com.amin.composeandmaps.screens.cars.CarListScreen
+import com.amin.composeandmaps.screens.demo.DemoScreen
+import com.amin.composeandmaps.screens.map.MapScreen
 import com.amin.composeandmaps.screens.splash.SplashScreen
 import com.amin.composeandmaps.screens.map_and_cars.MainScreen
 import com.amin.composeandmaps.screens.menu.MenuScreen
@@ -46,6 +49,19 @@ fun AppNavHost(
                 MainScreen(
                     viewModel = hiltViewModel(),
                 )
+            }
+            composable(MapScreen.route) {
+                MapScreen(
+                    viewModel = hiltViewModel(),
+                )
+            }
+            composable(CarsScreen.route) {
+                CarListScreen(
+                    viewModel = hiltViewModel(),
+                )
+            }
+            composable(DemoScreen.route) {
+                DemoScreen()
             }
             composable(MenuScreen.route) {
                 MenuScreen(
