@@ -21,12 +21,6 @@ class CarListTest {
     @get:Rule
     val composeAndroidTestRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule
-    var mRuntimePermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-
     @Test
     fun test_car_list_empty_list() {
         composeAndroidTestRule.setContent {
