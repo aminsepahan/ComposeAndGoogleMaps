@@ -1,4 +1,4 @@
-package com.amin.composeandmaps.ui.splash.splash
+package com.amin.composeandmaps.ui.splash
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText

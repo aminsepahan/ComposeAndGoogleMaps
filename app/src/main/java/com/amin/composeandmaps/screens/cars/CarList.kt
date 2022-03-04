@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.amin.composeandmaps.R
 import com.amin.composeandmaps.data.models.Car
@@ -21,7 +22,7 @@ fun CarList(
     cars: List<Car>,
     onItemClicked: (item: Car) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.testTag(TASK_LIST_TEST_TAG)) {
         item {
             cars.forEach { item ->
                 ListItem(item) {
@@ -58,3 +59,5 @@ fun ListItem(item: Car, onCarCardClicked: () -> Unit) {
         }
     }
 }
+
+const val TASK_LIST_TEST_TAG = "task_list_test_tag"

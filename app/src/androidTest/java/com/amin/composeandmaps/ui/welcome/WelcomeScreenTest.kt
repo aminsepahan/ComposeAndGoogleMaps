@@ -1,4 +1,4 @@
-package com.amin.composeandmaps.ui.splash.welcome
+package com.amin.composeandmaps.ui.welcome
 
 import android.Manifest
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
