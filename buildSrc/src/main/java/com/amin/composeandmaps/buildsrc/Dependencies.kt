@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 
 package com.amin.composeandmaps.buildsrc
 
@@ -20,7 +21,7 @@ object Libs {
     }
 
     object Accompanist {
-        const val version = "0.22.0-rc"
+        private const val version = "0.22.0-rc"
         const val insets = "com.google.accompanist:accompanist-insets:$version"
         const val permissions = "com.google.accompanist:accompanist-permissions:$version"
     }
@@ -33,7 +34,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.6.10"
+        private const val version = "1.7.20"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
@@ -55,7 +56,7 @@ object Libs {
 
         object Compose {
             const val snapshot = ""
-            const val version = "1.1.0-rc01"
+            const val version = "1.3.1"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata:$version"
@@ -105,7 +106,7 @@ object Libs {
     }
 
     object Hilt {
-        private const val version = "2.39"
+        private const val version = "2.42"
 
         const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
         const val android = "com.google.dagger:hilt-android:$version"
