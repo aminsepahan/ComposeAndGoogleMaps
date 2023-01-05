@@ -1,12 +1,12 @@
-name RunTest
+name: RunTest
 
 on:
-  push
+  push:
 
 jobs:
-   unitTests:
-	runs-on:ubunto-latest
+  unitTests:
+    runs-on: ubunto-latest
 	
-	steps:
-	- name: checkout
-	  uses: actions/checkout@v2
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
