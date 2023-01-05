@@ -1,10 +1,10 @@
 package com.amin.composeandmaps.di
 
+import com.amin.composeandmaps.shared.util.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.amin.composeandmaps.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -38,7 +38,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

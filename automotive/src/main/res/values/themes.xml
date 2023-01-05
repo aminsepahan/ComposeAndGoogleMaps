@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.ComposeAndMaps" parent="android:Theme.Material.Light.DarkActionBar" />
+</resources>
