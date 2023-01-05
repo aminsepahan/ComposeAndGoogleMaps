@@ -1,11 +1,13 @@
-name RunTest
+name: RunTest
 
-on: push
+on:
+  push
 
 jobs:
-   unitTests:
-	runs-on:ubunto-latest
-	
-	steps:
-	- name: checkout
-	  uses: actions/checkout@v2
+  unitTests:
+    runs-on: ubunto-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: "ktlint"
+        uses: "vroy/gha-kotlin-linter@v4"
