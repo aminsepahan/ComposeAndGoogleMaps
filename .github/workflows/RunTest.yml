@@ -1,6 +1,7 @@
 name RunTest
 
-on: push
+on:
+  push
 
 jobs:
    unitTests:
