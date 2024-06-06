@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.3.2'
         classpath Libs.secrets
         classpath Libs.Kotlin.gradlePlugin
         classpath Libs.Hilt.gradlePlugin
@@ -17,29 +17,17 @@ buildscript {
 
 plugins {
     id 'com.diffplug.spotless' version '6.0.0'
-    id 'com.android.application' version '7.3.1' apply false
+    id 'com.android.application' version '8.3.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
 }
 
 subprojects {
-    repositories {
-        google()
-        mavenCentral()
-
-        if (!Libs.AndroidX.Compose.snapshot.isEmpty()) {
-            maven { url Urls.composeSnapshotRepo }
-        }
-
-        if (Libs.Accompanist.version.endsWith('SNAPSHOT')) {
-            maven { url Urls.mavenCentralSnapshotRepo }
-        }
-    }
 
     apply plugin: 'com.diffplug.spotless'
     spotless {
         kotlin {
             target '**/*.kt'
-            targetExclude("$buildDir/**/*.kt")
+            targetExclude("${getLayout().getBuildDirectory()}/**/*.kt")
             targetExclude('bin/**/*.kt')
             ktlint(Versions.ktLint)
             licenseHeaderFile rootProject.file('spotless/copyright.kt')

@@ -89,7 +89,7 @@ object Libs {
 
     object InstrumentTest {
         const val junit = "junit:junit:4.13"
-        const val mockitoDexMaker = "com.linkedin.dexmaker:dexmaker-mockito:2.12.1"
+        const val mockitoDexMaker = "com.linkedin.dexmaker:dexmaker-mockito:2.28.3"
         const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1"
         const val coreTesting = "androidx.arch.core:core-testing:2.1.0"
         const val truth = "com.google.truth:truth:1.0.1"
