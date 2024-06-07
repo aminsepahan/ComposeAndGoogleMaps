@@ -29,7 +29,7 @@ fun AppNavHost(
 ) {
     val activity = LocalContext.current as Activity
     val actions = remember(navController) {
-        NavActions(navController, activity)
+        NavActions(navController)
     }
     ProvideWindowInsets {
         NavHost(navController = navController, startDestination = SplashScreen.route) {

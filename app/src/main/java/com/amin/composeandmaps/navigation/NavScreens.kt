@@ -1,6 +1,5 @@
 package com.amin.composeandmaps.navigation
 
-import android.app.Activity
 import androidx.navigation.NavHostController
 
 sealed class NavScreen(val route: String) {
@@ -11,9 +10,10 @@ sealed class NavScreen(val route: String) {
     object CarsScreen : NavScreen("Cars")
     object MenuScreen : NavScreen("Menu")
     object DemoScreen : NavScreen("Demo")
+    object Bluetooth : NavScreen("Demo")
 }
 
-class NavActions(navController: NavHostController, activity: Activity) {
+class NavActions(navController: NavHostController) {
 
     private val idForClearingBackStack = 0
 
@@ -44,9 +44,4 @@ class NavActions(navController: NavHostController, activity: Activity) {
     val navigateToDemoScreen: () -> Unit = {
         navController.navigate(route = NavScreen.DemoScreen.route)
     }
-
-    val upPress: () -> Unit = {
-        activity.onBackPressed()
-    }
 }
-
